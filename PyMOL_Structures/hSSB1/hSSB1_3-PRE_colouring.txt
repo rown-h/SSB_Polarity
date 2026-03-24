@@ -1,0 +1,31 @@
+
+run /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/data2bfactor.py
+run /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/spectrumany.py
+
+set use_shaders, 1
+
+alter prot, b = -1
+data2b_res prot, /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Output/PyMOL/Ratio_Files/hSSB1_3-PRE_scaled.txt
+
+color grey50, prot
+
+spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, 0.470474, 1
+
+select broad, prot and ((b > 0.222774 and b < 0.470474) or b = 0.470474)
+spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, 0.222774, 0.470474
+
+select strict, prot and (b > -1 and b < 0.222774)
+spectrumany b, 0x9eda4b 0x7ec46a 0x65b4bf, strict, 0, 0.222774
+
+select unassigned, prot and b = -1
+color 0xd9d9d9, unassigned
+
+set ray_trace_mode, 1
+set ambient, 0.5
+set cartoon_nucleic_acid_color, 0x8046b2
+set cartoon_ring_mode, 0
+set cartoon_ladder_color, 0xb274de
+set cartoon_ring_color, 0xb274de
+set bg_rgb, white
+set ray_shadows, 1
+

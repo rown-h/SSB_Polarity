@@ -11,15 +11,17 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "YB-1"
+protein <- "SsoSSB"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
-PREDNA <- "3-PRE"
+PREDNA <- "5-PRE"
 
 # Save the plot as a pdf?
 save_ratio_graph <- TRUE
 
-# Scale so that the greatest peak height ratio is set to 1?
+# Scale so that the greatest peak height ratio is set to 1? 
+# Required for PyMOL colouring. Recommended ON, but off will not overwrite the
+# "_scaled" files.
 scale_ratio <- TRUE
 
 # Show lines of mean and mean - SD on graph?
@@ -314,6 +316,15 @@ if (export_pymol_txt) {
   )
   
   message(".txt file written to ", pymol_output)
+}
+
+# WRITE INPUT FOR PYMOL ========================================================
+if (export_pymol_txt) {
+source(here('Scripts', 'PyMOL_Scripts', 'pymol_writer.R'))
+
+write_pymol_colouring_script()
+message(paste0('Entry for PyMOL command line saved to: PyMOL_Structures/',
+               protein, '/', protein, '_', PREDNA, '_colouring.txt'))
 }
 
 # FORMULA FOR MANUAL PYMOL INPUT ===============================================
