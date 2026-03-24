@@ -1,0 +1,12 @@
+YB-1 residues that I may need to delete:
+E121
+T126
+
+I55
+R77
+N76
+
+V63
+
+E121
+T126
