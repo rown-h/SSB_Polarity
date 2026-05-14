@@ -1,9 +1,10 @@
 write_pymol_colouring_script <- function() {
   
   # ---- pull required globals ----
+  maximum      <- get("maximum",      envir = .GlobalEnv)
   cutoff       <- get("cutoff",       envir = .GlobalEnv)
   cutoffstrict <- get("cutoffstrict", envir = .GlobalEnv)
-  protein      <- get("protein",         envir = .GlobalEnv)
+  protein      <- get("protein",      envir = .GlobalEnv)
   PREDNA       <- get("PREDNA",       envir = .GlobalEnv)
   
   # ---- resolve paths using here() ----
@@ -42,7 +43,7 @@ data2b_res prot, %s
 
 color grey50, prot
 
-spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, %f, 1
+spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, %f, %f
 
 select broad, prot and ((b > %f and b < %f) or b = %f)
 spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, %f, %f
@@ -65,7 +66,7 @@ set ray_shadows, 1
                          data2bfactor_path,
                          spectrumany_path,
                          ratio_file_path,
-                         cutoff,
+                         cutoff, maximum,
                          cutoffstrict, cutoff, cutoff,
                          cutoffstrict, cutoff,
                          cutoffstrict,

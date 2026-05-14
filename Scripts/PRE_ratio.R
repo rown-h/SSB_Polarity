@@ -1,5 +1,5 @@
 # PARAMAGNETIC RELAXATION ENHANCEMENT NMR RATIOS ===============================
-# R Heggen, 24 Mar 2026
+# R Heggen, 14 May 2026
 # Takes input of POKY list files and exports ratio of peak height differences
 # between oxidised and reduced PRE-DNA substrates.
 
@@ -11,10 +11,10 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "SsoSSB"
+protein <- "YB-1"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
-PREDNA <- "5-PRE"
+PREDNA <- "3-PRE"
 
 # Save the plot as a pdf?
 save_ratio_graph <- TRUE
@@ -22,16 +22,25 @@ save_ratio_graph <- TRUE
 # Scale so that the greatest peak height ratio is set to 1? 
 # Required for PyMOL colouring. Recommended ON, but off will not overwrite the
 # "_scaled" files.
-scale_ratio <- TRUE
+scale_ratio <- FALSE
+
+# Set the y-axis range to [0,1]
+standardise_y_axis <- FALSE
 
 # Show lines of mean and mean - SD on graph?
 plot_cutoffs <- FALSE
 
+# Show ribbon graph for distances (distance ± SD)
+graph_ribbons <- TRUE
+
+# Show both the distance to the 5' and 3' ends of DNA
+graph_both_distances <- TRUE
+
 # Save PyMOL text file?
-export_pymol_txt <- TRUE
+export_pymol_txt <- FALSE
 
 # Save preratio csv file?
-export_preratio_csv <- TRUE
+export_preratio_csv <- FALSE
 
 # LOADING FILES ================================================================
 # Import CSV with amino acid sequences and position shifts (i.e., a conversion
@@ -143,9 +152,17 @@ preratio <- subset(arrange(preratio, pos), pos > 0)
 preratio$ratio <- with(preratio, ifelse(is.na(Data.Height.x), 0, Data.Height.x / Data.Height.y))
 preratio$isitassigned <- "assigned"
 
+maximum <- max(preratio$ratio)
+
+message(paste("The maximum ratio is", maximum))
+
 ##Scale so max ratio = 1???
 if (scale_ratio == TRUE) {
-  preratio$ratio <- preratio$ratio / max(preratio$ratio)
+  preratio$ratio <- preratio$ratio / maximum
+  
+  # Redefine maximum to its new value of 1, for downstream PyMOL script.
+  maximum <- max(preratio$ratio)
+  message(paste("The maximum ratio after scaling is", maximum))
 }
 
 
@@ -172,6 +189,19 @@ zeroaa <- assignedaa[preratio$ratio == 0]
 # Affected levels===============================================================
 assignedpos <- pos[pos %in% preratio$pos]
 unassignedpos <- pos[!(pos %in% preratio$pos)]
+
+# DISTANCE DATA ================================================================
+# Load data based on name of file
+distance <- read.csv(here('Data','Distance_Data',
+  paste0(protein, '_distance.csv')))
+
+# Identify amino acid number
+distance$pos <- as.integer(str_extract(distance$Residue, '[0-9]+'))
+
+# Join to preratio dataframe, by the amino acid number
+preratio <- preratio %>%
+  left_join(distance, by = "pos")
+
 
 
 # GGPLOT2 BARPLOT ==============================================================
@@ -236,14 +266,17 @@ ratio_graph <- ratio_graph +
   scale_x_continuous(breaks = seq(5, ceiling(nchar(aseq) / 5) * 5, by = 5),
                      expand = c(0, 0),
   ) +
+  coord_cartesian(clip = 'off', expand = F)
+
+if(standardise_y_axis){
+ratio_graph <- ratio_graph +
   scale_y_continuous(
     breaks = seq(0, 1.35, by = 0.1),
     expand = c(0, 0),
     limits = c(0, 1),
     oob = scales::squish
-  ) +
-  coord_cartesian(clip = 'off', expand = F)
-
+  )
+}
 
 # Add circles where peaks completely disappeared
 ratio_graph <- ratio_graph +
@@ -257,6 +290,73 @@ ratio_graph <- ratio_graph +
     size = 2
   )
 
+# DISTANCE ON SECONDARY AXIS ===================================================
+sec_axis_scaling_factor <- max(preratio$ratio) / max(preratio$mean_angstrom_5,
+                                                     preratio$mean_angstrom_3,
+                                                     na.rm = TRUE)
+
+# Select which distance lines to graph
+graph_5 <- graph_both_distances || PREDNA == "5-PRE"
+graph_3 <- graph_both_distances || PREDNA == "3-PRE"
+
+
+# Add ribbon graph
+if (graph_ribbons) {
+  if (graph_5) {
+    ratio_graph <- ratio_graph +
+      geom_ribbon(
+        data = preratio,
+        aes(
+          x = pos,
+          ymin = (mean_angstrom_5 - sd_5) * sec_axis_scaling_factor,
+          ymax = (mean_angstrom_5 + sd_5) * sec_axis_scaling_factor
+        ),
+        fill = '#f8902b',
+        alpha = 0.5
+      )
+  }
+  
+  if (graph_3) {
+    ratio_graph <- ratio_graph +
+      geom_ribbon(
+        data = preratio,
+        aes(
+          x = pos,
+          ymin = (mean_angstrom_3 - sd_3) * sec_axis_scaling_factor,
+          ymax = (mean_angstrom_3 + sd_3) * sec_axis_scaling_factor
+        ),
+        fill = '#fb3b58',
+        alpha = 0.5
+      )
+  }
+}
+
+# Add line graph
+
+if (graph_5) {
+ratio_graph <- ratio_graph +
+  geom_line(aes(x = pos, y = mean_angstrom_5 * sec_axis_scaling_factor),
+            colour = '#f8902b',
+            linewidth = 1) }
+
+if (graph_3) {
+ratio_graph <- ratio_graph +
+  geom_line(aes(x = pos, y = mean_angstrom_3 * sec_axis_scaling_factor),
+            colour = '#fb3b58',
+            linewidth = 1) }
+
+ratio_graph <- ratio_graph +
+  scale_y_continuous(
+    name = "Signal intensity ratio",
+    sec.axis = sec_axis(
+      ~./sec_axis_scaling_factor,
+      name = "Distance to DNA end (Å)"
+    )
+  )
+
+ratio_graph
+
+# GRAPH SAVING =================================================================
 
 print(ratio_graph)
 
