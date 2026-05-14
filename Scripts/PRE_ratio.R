@@ -17,7 +17,7 @@ protein <- "YB-1"
 PREDNA <- "3-PRE"
 
 # Save the plot as a pdf?
-save_ratio_graph <- TRUE
+save_ratio_graph <- FALSE
 
 # Scale so that the greatest peak height ratio is set to 1? 
 # Required for PyMOL colouring. Recommended ON, but off will not overwrite the
@@ -29,6 +29,9 @@ standardise_y_axis <- FALSE
 
 # Show lines of mean and mean - SD on graph?
 plot_cutoffs <- FALSE
+
+# Show the distance between DNA ends and each residue's backbone on the graph?
+include_distance_curves <- TRUE
 
 # Show ribbon graph for distances (distance ± SD)
 graph_ribbons <- TRUE
@@ -191,17 +194,17 @@ assignedpos <- pos[pos %in% preratio$pos]
 unassignedpos <- pos[!(pos %in% preratio$pos)]
 
 # DISTANCE DATA ================================================================
-# Load data based on name of file
-distance <- read.csv(here('Data','Distance_Data',
-  paste0(protein, '_distance.csv')))
-
-# Identify amino acid number
-distance$pos <- as.integer(str_extract(distance$Residue, '[0-9]+'))
-
-# Join to preratio dataframe, by the amino acid number
-preratio <- preratio %>%
-  left_join(distance, by = "pos")
-
+if (include_distance_curves) {
+  # Load data based on name of file
+  distance <- read.csv(here('Data', 'Distance_Data', paste0(protein, '_distance.csv')))
+  
+  # Identify amino acid number
+  distance$pos <- as.integer(str_extract(distance$Residue, '[0-9]+'))
+  
+  # Join to preratio dataframe, by the amino acid number
+  preratio <- preratio %>%
+    left_join(distance, by = "pos")
+}
 
 
 # GGPLOT2 BARPLOT ==============================================================
@@ -291,6 +294,8 @@ ratio_graph <- ratio_graph +
   )
 
 # DISTANCE ON SECONDARY AXIS ===================================================
+if (include_distance_curves) {
+
 sec_axis_scaling_factor <- max(preratio$ratio) / max(preratio$mean_angstrom_5,
                                                      preratio$mean_angstrom_3,
                                                      na.rm = TRUE)
@@ -354,6 +359,7 @@ ratio_graph <- ratio_graph +
     )
   )
 
+}
 ratio_graph
 
 # GRAPH SAVING =================================================================
