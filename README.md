@@ -39,11 +39,7 @@ Thank you to those who developed helper PyMOL scripts, included here in the `Scr
 3. Create a folder for each protein in `PyMOL_Structures`
 
  \
- 4. Run the R script, `Scripts/PRE_ratio.R`
-   * This has toggles for all the outputs you may want to make.
-
- \
- 5. Populate the protein-DNA complex 3D structures.
+4. Populate the protein-DNA complex 3D structures.
   * Return to the `PyMOL_Structures/YOUR_PROTEIN` folder, and make the PyMOL structure .pse file.
       * You can use `fetch <PDB ID>` in [PyMOL](https://www.pymol.org/)
   * Isolate the protein to a selection called 'prot'
@@ -51,7 +47,15 @@ Thank you to those who developed helper PyMOL scripts, included here in the `Scr
       * You can do this by toggling on the sequence, highlighting all the relevant residues there, and typing `select DNA, sele`
 
  \
- 6. Colour the PyMOL structure
+5. **[OPTIONAL]** Populate `Data/Distance_Data` with the distances between the DNA ends and amino acid backbones.
+   * This can be used to graph a distance curve, which should broadly correspond with the signal intensity ratio if a protein binds unidirectionally.
+
+ \
+6. Run the R script, `Scripts/PRE_ratio.R`
+   * This has toggles for all the outputs you may want to make.
+
+ \
+7. Colour the PyMOL structure
    * Open the PyMOL structure .pse file.
    * Copy all the text from its corresponding colouring.txt file, and paste in the PyMOL command line.
        * The structure will be coloured!
