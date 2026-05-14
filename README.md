@@ -49,6 +49,9 @@ Thank you to those who developed helper PyMOL scripts, included here in the `Scr
  \
 5. **[OPTIONAL]** Populate `Data/Distance_Data` with the distances between the DNA ends and amino acid backbones.
    * This can be used to graph a distance curve, which should broadly correspond with the signal intensity ratio if a protein binds unidirectionally.
+   * Open the PyMOL structure and load the provided script in PyMOL: `run /path/to/SSB_Polarity/Scripts/PyMOL_Scripts/dna_distances.py`
+   * Run the custom function: `dna_distances(out_dir = '/path/to/SSB_Polarity/Data/Distance_Data', protein = 'my_protein')`
+      * Adjust other parameters if necessary for your PyMOL file.
 
  \
 6. Run the R script, `Scripts/PRE_ratio.R`
