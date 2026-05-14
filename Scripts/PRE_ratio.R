@@ -17,7 +17,7 @@ protein <- "YB-1"
 PREDNA <- "3-PRE"
 
 # Save the plot as a pdf?
-save_ratio_graph <- FALSE
+save_ratio_graph <- TRUE
 
 # Scale so that the greatest peak height ratio is set to 1? 
 # Required for PyMOL colouring. Recommended ON, but off will not overwrite the
