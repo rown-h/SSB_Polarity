@@ -11,10 +11,10 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "SsoSSB"
+protein <- "YB-1"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
-PREDNA <- "5-PRE"
+PREDNA <- "3-PRE"
 
 # Save the plot as a pdf?
 save_ratio_graph <- TRUE
