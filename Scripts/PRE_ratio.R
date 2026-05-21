@@ -11,10 +11,10 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "YB-1"
+protein <- "SsoSSB"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
-PREDNA <- "3-PRE"
+PREDNA <- "5-PRE"
 
 # Save the plot as a pdf?
 save_ratio_graph <- TRUE
@@ -39,10 +39,10 @@ graph_ribbons <- TRUE
 graph_both_distances <- FALSE
 
 # Save PyMOL text file?
-export_pymol_txt <- TRUE
+export_pymol_txt <- FALSE
 
 # Save preratio csv file?
-export_preratio_csv <- TRUE
+export_preratio_csv <- FALSE
 
 # LOADING FILES ================================================================
 # Import CSV with amino acid sequences and position shifts (i.e., a conversion
@@ -231,7 +231,8 @@ ratio_graph <- ratio_graph +
     )),
     color = "black",
     show.legend = FALSE,
-    width = 1
+    width = 1,
+    linewidth = 0.2
   ) +
   scale_fill_manual(
     values = c(
@@ -249,8 +250,11 @@ ratio_graph <- ratio_graph +
   # Adding x and y axis
   theme(axis.line.x = element_line(), axis.line.y = element_line()) +
   
-  labs(title = title, x = "Residue", y = "Signal intensity ratio") +
+  labs(x = "Residue", y = "Signal intensity ratio") +
   theme(
+    axis.title.x = element_text(size = 10, face = "bold"),
+    axis.title.y = element_text(size = 10, face = "bold"),
+    panel.grid.minor.y = element_blank(),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     axis.ticks = element_line(linewidth = 0.5),
@@ -260,8 +264,8 @@ ratio_graph <- ratio_graph +
 
 # Turning off labels for every second tick
 ratio_graph <- ratio_graph +
-  theme(axis.text.x = element_text(colour = c(NA, "black")),
-        axis.text.y = element_text(colour = c("black", NA)))
+  theme(axis.text.x = element_text(size = 8, colour = c(NA, "black")),
+        axis.text.y = element_text(size = 8, colour = "black"))
 
 # Axes
 ratio_graph <- ratio_graph +
@@ -288,8 +292,8 @@ ratio_graph <- ratio_graph +
     shape = 21,
     colour = "black",
     fill = "#9EDA4B",
-    stroke = 1,
-    size = 2
+    stroke = 0.3,
+    size = 1.5
   )
 
 # DISTANCE ON SECONDARY AXIS ===================================================
@@ -337,19 +341,19 @@ if (graph_ribbons) {
   }
 }
 
-# Add line graph
+# Add distance line graph
 
 if (graph_5) {
 ratio_graph <- ratio_graph +
   geom_line(aes(x = pos, y = mean_angstrom_5 * sec_axis_scaling_factor),
             colour = colour_5,
-            linewidth = 1) }
+            linewidth = 0.5) }
 
 if (graph_3) {
 ratio_graph <- ratio_graph +
   geom_line(aes(x = pos, y = mean_angstrom_3 * sec_axis_scaling_factor),
             colour = colour_3,
-            linewidth = 1) }
+            linewidth = 0.5) }
 
 ratio_graph <- ratio_graph +
   scale_y_continuous(
@@ -382,10 +386,10 @@ if (save_ratio_graph == TRUE) {
     filename = graph_filepath,
     device = "pdf",
     create.dir = TRUE,
-    width = 75,
-    height = 45,
+    width = 105,
+    height = 55,
     units = "mm",
-    scale = 2
+    scale = 1
   )
   
   message("Graph written to ", graph_filepath)
