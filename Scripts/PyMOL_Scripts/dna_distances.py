@@ -1,10 +1,68 @@
 """
 May 2026
 
+DESCRIPTION:
 Script to export the average distance between each amino acid backbone and the 5' or 3' DNA end.
 
 Contains one function:  dna_distances(out_dir = '', protein = '')
-Optional additional arguments as in lines 15-23.
+Optional additional arguments defined below.
+
+USAGE:
+To utilise, first prepare 'prot' and 'DNA' objects with multiple states in PyMOL
+
+    If necessary, join multiple objects into states in one object:
+        join_states states_combined, mod1 mod2 mod3 mod4 mod5...
+
+    Separate protein to its own object with multiple states:
+        create prot, states_combined and polymer.protein
+
+    Separate DNA to its own object with multiple states:
+        create DNA, states_combined and polymer.nucleic
+
+Then run the commands in PyMOL
+
+    Load this script:
+        run /path/to/dna_distances.py
+
+    Run the function:
+        dna_distances(out_dir = '', protein = '')
+
+ARGUMENTS:
+out_dir
+    string: Directory to output the CSV. Note, spaces in directory names may cause issues. {no default}
+
+protein
+    string: Name of your protein, which will be included in the filename. {default = 'my_protein'}
+
+raw_csv
+    bool: Output a csv with the individual distances between each DNA end and residue in every state. {default = False}
+
+prot_obj
+    string: Name of the isolated protein object in the PyMOL session. {default = 'prot'}
+
+dna_obj
+    string: Name of the isolated DNA object in the PyMOL session. {default = 'DNA'}
+
+five_prime_resi
+    int/string: PyMOL residue number for the 5' DNA end. If 'first', it will automatically determine this. {default = 'first'}
+
+three_prime_resi
+    int/string: PyMOL residue number for the 3' DNA end. If 'last', it will automatically determine this. {default = 'last'}
+
+five_prime_atom
+    string: PyMOL atom label from which to calculate 5' distances. If your model does not contain a complete DNA end, you may need to adjust this to "O5'". {default = "P"}
+
+three_prime_atom
+    string: PyMOL atom label from which to calculate 3' distances. Note, double quotes required if prime in atom label. {default = "O3'"}
+
+IF ERRORS ARE OCCURING:
+Check the following:
+1. Check the output for the number of states detected. Are the number of states for DNA and prot the same?
+2. Check the output for the number of atoms defined as the 5' phosphate selection and 3' OH selection. It should say 1 atom each. 
+   If 0, set DNA to view licorice, and check whether an atom is missing. Adjust five_prime_atom if required.
+3. Is the DNA oriented in the same direction in each model?
+4. Manually inspect data before averaging with raw_csv = True 
+
 """
 
 from pymol import cmd
@@ -16,8 +74,8 @@ def dna_distances(
         out_dir=None,
         protein='my_protein',
         raw_csv=False,
-        dna_obj='DNA',
         prot_obj='prot',
+        dna_obj='DNA',
         five_prime_resi='first',
         three_prime_resi='last',
         five_prime_atom='P',

@@ -1,21 +1,21 @@
 
-run /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/data2bfactor.py
-run /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/spectrumany.py
+run /Users/rowanheggen/Desktop/Data/NMR/R_analysis/PRE-DNA_Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/data2bfactor.py
+run /Users/rowanheggen/Desktop/Data/NMR/R_analysis/PRE-DNA_Analysis/SSB_Polarity/Scripts/PyMOL_Scripts/spectrumany.py
 
 set use_shaders, 1
 
 alter prot, b = -1
-data2b_res prot, /Users/rowanheggen/Desktop/Data/NMR/R analysis/PRE-DNA Analysis/SSB_Polarity/Output/PyMOL/Ratio_Files/hSSB1_5-PRE_scaled.txt
+data2b_res prot, /Users/rowanheggen/Desktop/Data/NMR/R_analysis/PRE-DNA_Analysis/SSB_Polarity/Output/PyMOL/Ratio_Files/hSSB1_5-PRE_unscaled.txt
 
 color grey50, prot
 
-spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, 0.350287, 1
+spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, 0.389757, 1.112677
 
-select broad, prot and ((b > 0.149215 and b < 0.350287) or b = 0.350287)
-spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, 0.149215, 0.350287
+select broad, prot and ((b > 0.166029 and b < 0.389757) or b = 0.389757)
+spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, 0.166029, 0.389757
 
-select strict, prot and (b > -1 and b < 0.149215)
-spectrumany b, 0x9eda4b 0x7ec46a 0x65b4bf, strict, 0, 0.149215
+select strict, prot and (b > -1 and b < 0.166029)
+spectrumany b, 0x9eda4b 0x7ec46a 0x65b4bf, strict, 0, 0.166029
 
 select unassigned, prot and b = -1
 color 0xd9d9d9, unassigned

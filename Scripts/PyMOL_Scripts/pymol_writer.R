@@ -18,7 +18,7 @@ write_pymol_colouring_script <- function() {
   
   ratio_file_path <- here::here(
     "Output", "PyMOL", "Ratio_Files",
-    paste0(protein, "_", PREDNA, "_scaled.txt")
+    paste0(protein, "_", PREDNA, "_unscaled.txt")
   )
   
   # ---- output location ----

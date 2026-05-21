@@ -20,11 +20,10 @@ PREDNA <- "3-PRE"
 save_ratio_graph <- TRUE
 
 # Scale so that the greatest peak height ratio is set to 1? 
-# Required for PyMOL colouring. Recommended ON, but off will not overwrite the
-# "_scaled" files.
+# Will not overwrite the "_unscaled" files.
 scale_ratio <- FALSE
 
-# Set the y-axis range to [0,1]
+# Set the y-axis range to [0,1]. Recommended if scale_ratio TRUE.
 standardise_y_axis <- FALSE
 
 # Show lines of mean and mean - SD on graph?
@@ -36,14 +35,14 @@ include_distance_curves <- TRUE
 # Show ribbon graph for distances (distance ± SD)
 graph_ribbons <- TRUE
 
-# Show both the distance to the 5' and 3' ends of DNA
-graph_both_distances <- TRUE
+# Show both the distance to the 5' and 3' ends of DNA. Orange = 5', Red = 3'
+graph_both_distances <- FALSE
 
 # Save PyMOL text file?
-export_pymol_txt <- FALSE
+export_pymol_txt <- TRUE
 
 # Save preratio csv file?
-export_preratio_csv <- FALSE
+export_preratio_csv <- TRUE
 
 # LOADING FILES ================================================================
 # Import CSV with amino acid sequences and position shifts (i.e., a conversion
@@ -304,6 +303,8 @@ sec_axis_scaling_factor <- max(preratio$ratio) / max(preratio$mean_angstrom_5,
 graph_5 <- graph_both_distances || PREDNA == "5-PRE"
 graph_3 <- graph_both_distances || PREDNA == "3-PRE"
 
+colour_5 <- ifelse(graph_both_distances, "#f8902b", "#ff76b5")
+colour_3 <- ifelse(graph_both_distances, "#fb3b58", "#ff76b5")
 
 # Add ribbon graph
 if (graph_ribbons) {
@@ -316,7 +317,7 @@ if (graph_ribbons) {
           ymin = (mean_angstrom_5 - sd_5) * sec_axis_scaling_factor,
           ymax = (mean_angstrom_5 + sd_5) * sec_axis_scaling_factor
         ),
-        fill = '#f8902b',
+        fill = colour_5,
         alpha = 0.5
       )
   }
@@ -330,7 +331,7 @@ if (graph_ribbons) {
           ymin = (mean_angstrom_3 - sd_3) * sec_axis_scaling_factor,
           ymax = (mean_angstrom_3 + sd_3) * sec_axis_scaling_factor
         ),
-        fill = '#fb3b58',
+        fill = colour_3,
         alpha = 0.5
       )
   }
@@ -341,13 +342,13 @@ if (graph_ribbons) {
 if (graph_5) {
 ratio_graph <- ratio_graph +
   geom_line(aes(x = pos, y = mean_angstrom_5 * sec_axis_scaling_factor),
-            colour = '#f8902b',
+            colour = colour_5,
             linewidth = 1) }
 
 if (graph_3) {
 ratio_graph <- ratio_graph +
   geom_line(aes(x = pos, y = mean_angstrom_3 * sec_axis_scaling_factor),
-            colour = '#fb3b58',
+            colour = colour_3,
             linewidth = 1) }
 
 ratio_graph <- ratio_graph +
@@ -400,7 +401,7 @@ if (export_pymol_txt) {
                              rep("unassigned", length(unassignedpos)))
   names(unassigneddf) <- c("pos", "ratio", "isitassigned")
   
-  pymolscriptdfcheck <- preratio[, -c(2, 3)]
+  pymolscriptdfcheck <- select(preratio, c(pos, ratio, isitassigned))
   pymolscriptdfcheck <- arrange(rbind(pymolscriptdfcheck, unassigneddf), pos)
   pymolscriptdf <- subset(pymolscriptdfcheck, select = -c(isitassigned))
   
