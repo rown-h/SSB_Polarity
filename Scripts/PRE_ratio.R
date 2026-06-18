@@ -11,7 +11,7 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "YB-1"
+protein <- "hSSB2"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
 PREDNA <- "3-PRE"
@@ -39,10 +39,10 @@ graph_ribbons <- TRUE
 graph_both_distances <- FALSE
 
 # Save PyMOL text file?
-export_pymol_txt <- FALSE
+export_pymol_txt <- TRUE
 
 # Save preratio csv file?
-export_preratio_csv <- FALSE
+export_preratio_csv <- TRUE
 
 # LOADING FILES ================================================================
 # Import CSV with amino acid sequences and position shifts (i.e., a conversion

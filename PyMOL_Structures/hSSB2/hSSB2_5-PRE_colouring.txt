@@ -9,13 +9,13 @@ data2b_res prot, /Users/rowanheggen/Desktop/Data/NMR/R_analysis/PRE-DNA_Analysis
 
 color grey50, prot
 
-spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, 0.146841, 0.437771
+spectrumany b, 0x7c8fb3 0x858585 0x737373, prot, 0.144606, 0.437771
 
-select broad, prot and ((b > 0.055425 and b < 0.146841) or b = 0.146841)
-spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, 0.055425, 0.146841
+select broad, prot and ((b > 0.053964 and b < 0.144606) or b = 0.144606)
+spectrumany b, 0x65b4bf 0x648bcc 0x7c8fb3, broad, 0.053964, 0.144606
 
-select strict, prot and (b > -1 and b < 0.055425)
-spectrumany b, 0x9eda4b 0x7ec46a 0x65b4bf, strict, 0, 0.055425
+select strict, prot and (b > -1 and b < 0.053964)
+spectrumany b, 0x9eda4b 0x7ec46a 0x65b4bf, strict, 0, 0.053964
 
 select unassigned, prot and b = -1
 color 0xd9d9d9, unassigned
