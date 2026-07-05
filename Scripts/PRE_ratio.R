@@ -11,10 +11,10 @@ library(tidyverse)
 
 # INPUTS =======================================================================
 # Selected protein folder
-protein <- "hSSB2"
+protein <- "hSSB1"
 
 # Selected PRE-DNA (5-PRE or 3-PRE)
-PREDNA <- "3-PRE"
+PREDNA <- "5-PRE"
 
 # Save the plot as a pdf?
 save_ratio_graph <- TRUE
@@ -30,7 +30,7 @@ standardise_y_axis <- FALSE
 plot_cutoffs <- FALSE
 
 # Show the distance between DNA ends and each residue's backbone on the graph?
-include_distance_curves <- TRUE
+include_distance_curves <- FALSE
 
 # Show ribbon graph for distances (distance ± SD)
 graph_ribbons <- TRUE
@@ -119,13 +119,21 @@ filter_data <- function(df) {
 
 datalist <- lapply(datalist, filter_data)
 
-#Function to extract the position from the peak name
+# Function to extract the position from the peak name
 extract_ogpos <- function(df) {
   df$ogpos <- as.numeric(str_extract(df$peak, "\\d+(?=N-H)"))
   return(df)
 }
 
 datalist <- lapply(datalist, extract_ogpos)
+
+# Calculate real position
+calculate_pos <- function(df) {
+  df$pos <- df$ogpos + positionshift
+  return(df)
+}
+
+datalist <- lapply(datalist, calculate_pos)
 
 
 ## Extracting PRE_ox AND PRE_red dataframes ----
@@ -138,10 +146,6 @@ for (i in seq_along(datalist)) {
 # Generalise name, so it works for any PRE-DNA
 PRE_ox <- get(paste0(PREDNA, "_ox"))
 PRE_red <- get(paste0(PREDNA, "_red"))
-
-# Calculate the real positions
-PRE_ox$pos <- PRE_ox$ogpos + positionshift
-PRE_red$pos <- PRE_red$ogpos + positionshift
 
 
 ## Combining to yield preratio dataframe ----
