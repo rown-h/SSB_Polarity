@@ -6,4 +6,6 @@
 Data/Distance_Data/Old/
 Data/List_Files/hSSB1/Old*
 Data/List_Files/hSSB2/Old*
+Data/List_Files/YB-1/Old*
 PyMOL_Structures/Old
+Scripts/orientation_overlay.R
